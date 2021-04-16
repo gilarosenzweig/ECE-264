@@ -160,6 +160,13 @@ void parse(string words[], ifstream &inputfile){
         inputfile >> words[2];
     }
 }
+template <typename T> SimpleList<T>* getList(string name, list<SimpleList<T>*> setOfLists) {
+for (auto it = setOfLists.begin(); it != setOfLists.end(); it++) {
+if (((*it) -> getName()) == name)
+return *it;
+}
+return nullptr;
+}
 
 int main() {
     ifstream inputfile;
@@ -196,7 +203,7 @@ int main() {
                 else if (words[2] == "queue"){
                     if (dataType == 'i'){
                         //push new queue into listSLi
-                        new stack<int> (words[1]);
+                        new queue<int> (words[1]);
                     }
                     else if (dataType == 'd'){
                         //push new queue into SLd

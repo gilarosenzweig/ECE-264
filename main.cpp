@@ -33,7 +33,8 @@ template <typename stuff> class simpleList {
         }
     };
 protected:
-    struct Node* firstptr, lastptr;
+    struct Node* firstptr;
+    struct Node* lastptr;
     int length;
     string name;
 public:
@@ -94,7 +95,7 @@ public:
     }
     stuff removeAtStart() {
         if (isEmpty()){
-            return;
+            return 0;
         }
         else if (length ==1){
             stuff extract = firstptr -> getValue();
@@ -218,12 +219,15 @@ int main() {
                 }
                 if (dataType =='i'){
                     getList(words[1], listSLi) -> push(stoi(words[2]));
+                    continue;
                 }
                 else if (dataType == 'd'){
                     getList(words[1], listSLd) -> push(stod(words[2]));
+                    continue;
                 }
                 else if (dataType == 's'){
                     getList(words[1], listSLs) -> push(words[2]);
+                    continue;
                 }
             }
             else if (words[0] == "pop"){
@@ -233,13 +237,22 @@ int main() {
                 }
                 switch (dataType) {
                     case 'i':
-                        getList(words[1], listSLi) -> pop();
+                        if (getList(words[1], listSLi)-> isEmpty()){
+                            outputfile << "ERROR: This list is empty!\n";
+                        }
+                        outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
                         break;
                     case 'd':
-                        getList(words[1], listSLd) -> pop();
+                        if (getList(words[1], listSLd)-> isEmpty()){
+                            outputfile << "ERROR: This list is empty!\n";
+                        }
+                        outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
                         break;
                     case 's':
-                        getList(words[1], listSLs) -> pop();
+                        if (getList(words[1], listSLs)-> isEmpty()){
+                            outputfile << "ERROR: This list is empty!\n";
+                        }
+                        outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
                         break;
                     default:
                         break;

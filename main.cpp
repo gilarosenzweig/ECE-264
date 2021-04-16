@@ -203,12 +203,10 @@ int main() {
                         listSLi.push_front(new queue<int> (words[1]));
                     }
                     else if (dataType == 'd'){
-                        //push new queue into SLd
-                        listSLd.push_front(new queue<double> (words[1]));
+                        listSLd.push_front(new queue<double> (words[1])); //push new queue into SLd
                     }
                     else if (dataType == 's'){
-                        // push new queue into listSLs
-                        listSLs.push_front(new queue<string> (words[1]));
+                        listSLs.push_front(new queue<string> (words[1])); // push new queue into listSLs
                     }
                 }
             }
@@ -235,29 +233,30 @@ int main() {
                     outputfile << "ERROR: This name does not exist!\n";
                     continue;
                 }
-                switch (dataType) {
-                    case 'i':
-                        if (getList(words[1], listSLi)-> isEmpty()){
-                            outputfile << "ERROR: This list is empty!\n";
-                        }
-                        outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
-                        break;
-                    case 'd':
-                        if (getList(words[1], listSLd)-> isEmpty()){
-                            outputfile << "ERROR: This list is empty!\n";
-                        }
-                        outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
-                        break;
-                    case 's':
-                        if (getList(words[1], listSLs)-> isEmpty()){
-                            outputfile << "ERROR: This list is empty!\n";
-                        }
-                        outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
-                        break;
-                    default:
-                        break;
-                }
-
+               if (dataType == 'i'){
+                   if (getList(words[1], listSLi)-> isEmpty()){
+                       outputfile << "ERROR: This list is empty!\n";
+                       continue;
+                   }
+                   outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
+                   continue;
+               }
+               else if (dataType == 'd'){
+                   if (getList(words[1], listSLd)-> isEmpty()){
+                           outputfile << "ERROR: This list is empty!\n";
+                           continue;
+                   }
+                   outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
+                   continue;
+               }
+               else if (dataType == 's'){
+                   if (getList(words[1], listSLs)-> isEmpty()){
+                       outputfile << "ERROR: This list is empty!\n";
+                       continue;
+                   }
+                   outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
+                   continue;
+               }
             }
         }
     }

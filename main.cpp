@@ -1,53 +1,54 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <list>
+#include <iostream> //library for reading file names
+#include <fstream> //library for reading files
+#include <string> //library for string functionality
+#include <list> //library for list functionality (used to track the created stacks/queues
 
-using namespace std;
-string useroutfile, userinfile;
+using namespace std; //using the standard namespace. put here to avoid needing it throughout the code
+string useroutfile, userinfile; //global variables for the user file names
 
-template <typename MyType> class simpleList {
+template <typename MyType> class simpleList { //class for simpleList. it is the base class for the stack and queue classes
  private:
-    struct Node {
+    struct Node { //this is the basic structure for simpleList
+        //members of this sub-struct are public (by default)
         MyType value;
         struct Node* next;
         Node (MyType item) {
-            value = item;
-            next = nullptr;
+            value = item; //the value stored in the node
+            next = nullptr; //pointer to the next node, initially null
         }
 
-        MyType getValue() const {
+        MyType getValue() const { //getter for value
             return value;
         }
 
-        void setValue(MyType value) {
+        void setValue(MyType value) { //setter for value
             Node::value = value;
         }
 
-        Node *getNext() const {
+        Node *getNext() const { //getter for next
             return next;
         }
 
-        void setNext(Node *next) {
+        void setNext(Node *next) { //setter for next
             Node::next = next;
         }
     };
-protected:
-    struct Node* firstptr;
-    struct Node* lastptr;
-    int length;
-    string name;
+protected: //protected variables are accessible by the classes that inherit from base class (stack and queue)
+    struct Node* firstptr; //pointer to the first item in the list
+    struct Node* lastptr; //pointer to the last item in the list
+    int length; //stores the length of the list
+    string name; //stores the name of the list
 public:
     simpleList(string str) {
-        firstptr = nullptr;
-        lastptr = nullptr;
-        length = 0;
-        name = str;
+        firstptr = nullptr; //firstptr is initially pointing to nothing, because there are not yet any items in the list
+        lastptr = nullptr; //same for lastptr
+        length = 0; //length is at first 0, because nothing in the list
+        name = str; //the name of the list is a string (str)
     }
-    virtual void push(MyType item) = 0;
-    virtual MyType pop() =0;
+    virtual void push(MyType item) = 0; //this function will be defined in stack and queue
+    virtual MyType pop() =0; //this function will be defined in stack and queue
 
-    const string &getName() const {
+    const string &getName() const { //getter for the name of the list
         return name;
     }
 
@@ -165,14 +166,14 @@ void parse(string words[], ifstream &inputfile){
 string getInFileName(){
     cout << "input file name: ";
     cin >> userinfile;
-    userinfile = userinfile + ".txt";
+    //userinfile = userinfile + ".txt";
     return userinfile;
 }
 
 string getOutFileName(){
     cout << "output file name: ";
     cin >> useroutfile;
-    useroutfile = useroutfile + ".txt";
+    //useroutfile = useroutfile + ".txt";
     return useroutfile;
 }
 void reader(){

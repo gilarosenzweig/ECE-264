@@ -2,25 +2,25 @@
 #include <fstream>
 #include <string>
 #include <list>
-#include <iterator>
-#include <vector>
-using namespace std;
 
-template <typename stuff> class simpleList {
+using namespace std;
+string useroutfile, userinfile;
+
+template <typename MyType> class simpleList {
  private:
     struct Node {
-        stuff value;
+        MyType value;
         struct Node* next;
-        Node (stuff item) {
+        Node (MyType item) {
             value = item;
             next = nullptr;
         }
 
-        stuff getValue() const {
+        MyType getValue() const {
             return value;
         }
 
-        void setValue(stuff value) {
+        void setValue(MyType value) {
             Node::value = value;
         }
 
@@ -38,14 +38,14 @@ protected:
     int length;
     string name;
 public:
-    simpleList(string thing) {
+    simpleList(string str) {
         firstptr = nullptr;
         lastptr = nullptr;
         length = 0;
-        name = thing;
+        name = str;
     }
-    virtual void push(stuff item) = 0;
-    virtual stuff pop() =0;
+    virtual void push(MyType item) = 0;
+    virtual MyType pop() =0;
 
     const string &getName() const {
         return name;
@@ -67,8 +67,8 @@ public:
         return length == 0;
     }
 
-    void insertAtStart(stuff thing){
-        Node* insert = new Node(thing);
+    void insertAtStart(MyType newNode){
+        Node* insert = new Node(newNode);
         if (isEmpty()){
             firstptr = insert;
             lastptr = insert;
@@ -80,8 +80,8 @@ public:
             length = length + 1;
         }
     }
-    void insertAtEnd(stuff thing){
-        Node* insert = new Node(thing);
+    void insertAtEnd(MyType newNode){
+        Node* insert = new Node(newNode);
         if (isEmpty()){
             lastptr = insert;
             firstptr = insert;
@@ -93,19 +93,19 @@ public:
             length = length + 1;
         }
     }
-    stuff removeAtStart() {
+    MyType removeAtStart() {
         if (isEmpty()){
             return 0;
         }
         else if (length ==1){
-            stuff extract = firstptr -> getValue();
+            MyType extract = firstptr -> getValue();
             firstptr = nullptr;
             lastptr = nullptr;
             length = length - 1;
             return extract;
         }
         else {
-            stuff extract = firstptr -> getValue();
+            MyType extract = firstptr -> getValue();
             firstptr = firstptr -> getNext();
             length = length - 1;
             return extract;
@@ -113,27 +113,35 @@ public:
     }
 };
 
-template <typename stuff> class stack: public simpleList<stuff> {
-    using simpleList<stuff>::simpleList;
+template <typename MyType> class stack: public simpleList<MyType> {
+    using simpleList<MyType>::simpleList;
     public:
-        void push(stuff thing){
-            this -> insertAtStart(thing);
+        void push(MyType newNode){
+            this -> insertAtStart(newNode);
         }
-        stuff pop(){
+        MyType pop(){
             return this -> removeAtStart();
         }
 };
 
-template <typename stuff> class queue: public simpleList<stuff>{
-    using simpleList<stuff>::simpleList;
+template <typename MyType> class queue: public simpleList<MyType>{
+    using simpleList<MyType>::simpleList;
     public:
-        void push(stuff thing){
-            this -> insertAtEnd(thing);
+        void push(MyType newNode){
+            this -> insertAtEnd(newNode);
         }
-        stuff pop() {
+        MyType pop() {
             return this -> removeAtStart();
         }
 };
+
+template <typename T> simpleList<T>* getList(string name, list<simpleList<T>*> setOfLists) {
+    for (auto it = setOfLists.begin(); it != setOfLists.end(); it++) {
+        if (((*it) -> getName()) == name)
+            return *it;
+    }
+    return nullptr;
+}
 
 bool checkName(string name, list<string> nameList){
     for (string n: nameList){
@@ -154,24 +162,31 @@ void parse(string words[], ifstream &inputfile){
         inputfile >> words[2];
     }
 }
-template <typename T> simpleList<T>* getList(string name, list<simpleList<T>*> setOfLists) {
-    for (auto it = setOfLists.begin(); it != setOfLists.end(); it++) {
-        if (((*it) -> getName()) == name)
-            return *it;
-    }
-    return nullptr;
+string getInFileName(){
+    cout << "input file name: ";
+    cin >> userinfile;
+    userinfile = userinfile + ".txt";
+    return userinfile;
 }
 
-int main() {
+string getOutFileName(){
+    cout << "output file name: ";
+    cin >> useroutfile;
+    useroutfile = useroutfile + ".txt";
+    return useroutfile;
+}
+void reader(){
     ifstream inputfile;
     ofstream outputfile;
+    getInFileName();
+    getOutFileName();
     string words[3];
     list < simpleList<int> * > listSLi; //all integer stacks and queues
     list < simpleList<double> * > listSLd; //all double stacks and queues
     list < simpleList<string> * > listSLs; //all string stacks and queues
     list <string> nameList; //list of all list names
-    inputfile.open("input.txt");
-    outputfile.open("output.txt");
+    inputfile.open(userinfile);
+    outputfile.open(useroutfile);
     if (inputfile.is_open()){
         while (inputfile.peek() != EOF){
             parse(words, inputfile);
@@ -233,31 +248,34 @@ int main() {
                     outputfile << "ERROR: This name does not exist!\n";
                     continue;
                 }
-               if (dataType == 'i'){
-                   if (getList(words[1], listSLi)-> isEmpty()){
-                       outputfile << "ERROR: This list is empty!\n";
-                       continue;
-                   }
-                   outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
-                   continue;
-               }
-               else if (dataType == 'd'){
-                   if (getList(words[1], listSLd)-> isEmpty()){
-                           outputfile << "ERROR: This list is empty!\n";
-                           continue;
-                   }
-                   outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
-                   continue;
-               }
-               else if (dataType == 's'){
-                   if (getList(words[1], listSLs)-> isEmpty()){
-                       outputfile << "ERROR: This list is empty!\n";
-                       continue;
-                   }
-                   outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
-                   continue;
-               }
+                if (dataType == 'i'){
+                    if (getList(words[1], listSLi)-> isEmpty()){
+                        outputfile << "ERROR: This list is empty!\n";
+                        continue;
+                    }
+                    outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
+                    continue;
+                }
+                else if (dataType == 'd'){
+                    if (getList(words[1], listSLd)-> isEmpty()){
+                        outputfile << "ERROR: This list is empty!\n";
+                        continue;
+                    }
+                    outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
+                    continue;
+                }
+                else if (dataType == 's'){
+                    if (getList(words[1], listSLs)-> isEmpty()){
+                        outputfile << "ERROR: This list is empty!\n";
+                        continue;
+                    }
+                    outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
+                    continue;
+                }
             }
         }
     }
+}
+int main() {
+    reader();
 }

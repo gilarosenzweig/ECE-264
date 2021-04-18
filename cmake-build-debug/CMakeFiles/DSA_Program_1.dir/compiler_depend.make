@@ -165,23 +165,8 @@ CMakeFiles/DSA_Program_1.dir/main.cpp.o: ../main.cpp \
   /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_list.h \
   /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/allocated_ptr.h \
   /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/ext/aligned_buffer.h \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/list.tcc \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/iterator \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stream_iterator.h \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/vector \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_uninitialized.h \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_vector.h \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_bvector.h \
-  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/vector.tcc
+  /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/list.tcc
 
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/vector.tcc:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_bvector.h:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_vector.h:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/iterator:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/list.tcc:
 
@@ -196,8 +181,6 @@ CMakeFiles/DSA_Program_1.dir/main.cpp.o: ../main.cpp \
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/fstream:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/istream.tcc:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stream_iterator.h:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/ostream.tcc:
 
@@ -260,8 +243,6 @@ CMakeFiles/DSA_Program_1.dir/main.cpp.o: ../main.cpp \
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/ext/type_traits.h:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stringfwd.h:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/vector:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/functexcept.h:
 
@@ -456,8 +437,6 @@ CMakeFiles/DSA_Program_1.dir/main.cpp.o: ../main.cpp \
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/hash_bytes.h:
 
 /usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/allocator.h:
-
-/usr/lib/gcc/x86_64-pc-cygwin/10/include/c++/bits/stl_uninitialized.h:
 
 /usr/include/sys/config.h:
 

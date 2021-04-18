@@ -224,7 +224,10 @@ void reader(){
     if (inputfile.is_open()){
         while (inputfile.peek() != EOF){
             parse(words, inputfile);
-            outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n";
+            if (words[0] == "pop")
+                outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << "\n";
+            else
+                outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n";
             char dataType = words[1].at(0); //reads the first char of the list name, to determine the type of data it stores
             if (words[0] == "create"){
                 /*if the first word of the command is create:
@@ -253,15 +256,15 @@ void reader(){
                         listSLs.push_front(new queue<string> (words[1]));
                 }
             }
-            else if (words[0] == "push"){
+            else if (words[0] == "push") {
                 /*if the second word is push:
                  * check name list to ensure the list does exist
                  * push the third word
                  */
-                if ( !checkName(words[1], nameList))
+                if (!checkName(words[1], nameList))
                     outputfile << "ERROR: This name does not exist!\n";
-                else if (dataType =='i')
-                    getList(words[1], listSLi) -> push(stoi(words[2]));
+                else if (checkName(words[1], nameList) && dataType =='i')
+                    getList(words[1], listSLi)->push(stoi(words[2]));
                 else if (dataType == 'd')
                     getList(words[1], listSLd) -> push(stod(words[2]));
                 else if (dataType == 's')
@@ -274,7 +277,7 @@ void reader(){
                  */
                 if ( !checkName(words[1], nameList))
                     outputfile << "ERROR: This name does not exist!\n";
-                if (dataType == 'i'){
+                else if (dataType == 'i'){
                     if (getList(words[1], listSLi)-> isEmpty())
                         outputfile << "ERROR: This list is empty!\n";
                      else

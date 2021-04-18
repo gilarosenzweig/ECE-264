@@ -1,101 +1,125 @@
-#include <iostream> //library for reading file names
-#include <fstream> //library for reading files
-#include <string> //library for string functionality
-#include <list> //library for list functionality (used to track the created stacks/queues
+/* Gila Rosenzweig
+ *
+ * This program reads a user-designated text file for commands,
+ * and, using the first word of the commands, creates lists of both stack and queue types, and can push and pop items from those lists.
+ * Based on the second word in the command, the program determines the type of data stored in the list, as well as the name of that particular list.
+ * The third word indicates either the type of list, or the value to be pushed onto the list.
+ * An output file (name designated by user) keeps track of all processing commands, any errors that occur, and any values popped from the list.
+ */
 
-using namespace std; //using the standard namespace. put here to avoid needing it throughout the code
-string useroutfile, userinfile; //global variables for the user file names
 
-template <typename MyType> class simpleList { //class for simpleList. it is the base class for the stack and queue classes
- private: //private members cannot be accessed by classes that inherit from simpleList
-    struct Node { //this is the basic structure for simpleList
-        //members of this sub-struct are public (by default), so they are accessible by stack and queue
-        MyType value;
-        struct Node* next;
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <list>
+
+using namespace std;
+string useroutfile, userinfile;
+
+//abstract base class for simpleList. stack and queue will inherit from this class
+template <typename MyType> class simpleList {
+ private:
+    string name; //stores name of the list
+    struct Node {
+        MyType value; //the value stored in the node
+        struct Node* next; //pointer to the next node
         Node (MyType item) {
-            value = item; //the value stored in the node
-            next = nullptr; //pointer to the next node, initially null
+            value = item;
+            next = nullptr;
         }
 
-        MyType getValue() const { //getter for value
+        //getter for value (allows other functions to retrieve value)
+        MyType getValue() const {
             return value;
         }
-
-        void setValue(MyType value) { //setter for value
+        //setter for value (allows other functions to set value)
+        void setValue(MyType value) {
             Node::value = value;
         }
-
-        Node *getNext() const { //getter for next
+        //getter for next (allows other functions to retrieve next)
+        Node *getNext() const {
             return next;
         }
-
-        void setNext(Node *next) { //setter for next
+        //setter for next (allows other functions to set next)
+        void setNext(Node *next) {
             Node::next = next;
         }
     };
-protected: //protected variables are accessible by the classes that inherit from base class (stack and queue)
-    struct Node* firstptr; //pointer to the first item in the list
-    struct Node* lastptr; //pointer to the last item in the list
-    int length; //stores the length of the list
-    string name; //stores the name of the list
-public: //public members can be accessed by the classes that inherit from simpleList (namely, stack and queue)
+//defines variables for the length, pointer to first item, and pointer to last item of the list
+protected:
+    struct Node* firstptr;
+    struct Node* lastptr;
+    int length;
+
+public:
+    //constructor for a simple list: when a list is created, the input 'str' is the list name, the length is 0, the first and last pointers are null
     simpleList(string str) {
-        firstptr = nullptr; //firstptr is initially pointing to nothing, because there are not yet any items in the list
-        lastptr = nullptr; //same for lastptr
-        length = 0; //length is at first 0, because nothing in the list
-        name = str; //the name of the list is a string (str)
+        firstptr = nullptr;
+        lastptr = nullptr;
+        length = 0;
+        name = str;
     }
     virtual void push(MyType item) = 0; //this function will be defined in stack and queue
     virtual MyType pop() =0; //this function will be defined in stack and queue
 
-    const string &getName() const { //getter for the name of the list
+    //getter for the name of the list (allows other functions to retrieve name)
+    const string &getName() const {
         return name;
     }
-
-    int getlength() const { //getter for the length of the list
+    //getter for the length of the list (allows other functions to retrieve length)
+    int getlength() const {
         return length;
     }
-
-    Node *getFirstptr() const { //getter for the firstptr
+    //getter for the firstptr (allows other functions to retrieve firstptr)
+    Node *getFirstptr() const {
         return firstptr;
     }
-
-    void setFirstptr(Node *firstptr) { //setter for the firstptr
+    //setter for the firstptr (allows other functions to set firstptr)
+    void setFirstptr(Node *firstptr) {
         simpleList::firstptr = firstptr;
     }
-
-    bool isEmpty() { //checks if the list is empty
+    //checks if the list is empty
+    bool isEmpty() {
         return length == 0;
     }
-
-    void insertAtStart(MyType newNode){ //allows a new item to be inserted at the beginning of the simpleList
+    //allows a new item to be inserted at the beginning of the simpleList
+    void insertAtStart(MyType newNode){
         Node* insert = new Node(newNode);
-        if (isEmpty()){ //if there is initially nothing in the list,
-            firstptr = insert; //the fistptr points to the inserted item
-            lastptr = insert; //the lastptr also points to the inserted item
-            length = length + 1; //the length of the list in incremented by 1
+        if (isEmpty()){
+            //for an initially empty list, the firstptr and lastptr are reset to point to the inserted value
+            firstptr = insert;
+            lastptr = insert;
+            length = length + 1;
         }
-        else { //if there is already at least one item in the list:
-            insert -> setNext(firstptr); //the pointer in the new node points to the existing first item
-            firstptr = insert; //the firstptr is set to point to the inserted item (making the inserted item the first one)
-            length = length + 1; //the length is incremented by 1
+        else {
+            //for a list that already contains members, the pointer of the new node points to the existing first item
+            //the firstptr is reset to point to the inserted node
+            insert -> setNext(firstptr);
+            firstptr = insert;
+            length = length + 1;
         }
     }
-    void insertAtEnd(MyType newNode){ //allows a new item (given in command) to be inserted to the end of the simpleList
+    //allows a new item (given in command) to be inserted to the end of the simpleList
+    void insertAtEnd(MyType newNode){
         Node* insert = new Node(newNode);
-        if (isEmpty()){ //if the list is initially empty,
-            lastptr = insert; //the lastptr points to the inserted item
-            firstptr = insert; //the firstptr also points to the inserted item
-            length = length + 1; //length is incremented by 1
+        if (isEmpty()){
+            //if the list is initially empty, firstptr and lastptr are reset to point to the inserted node
+            lastptr = insert;
+            firstptr = insert;
+            length = length + 1;
         }
-        else { //if the list already has at least one item:
-            lastptr -> setNext(insert); //the 'next' pointer of the existing last node is changed to point to the inserted item
-            lastptr = insert; //the lastptr is reset to be the 'next' pointer in the inserted node
-            length = length + 1; //length is incremented by 1
+        else {
+            //if the list already contains node(s): the pointer in the existing last node changes to point to the inserted node
+            //lastptr is reset to be the pointer of the inserted node
+            lastptr -> setNext(insert);
+            lastptr = insert;
+            length = length + 1;
         }
     }
-    MyType removeAtStart() { //to take a value off the beginning of the list:
-        if (isEmpty()){ //if the list is empty
+    //to take a value off the beginning of the list:
+    MyType removeAtStart() {
+        if (isEmpty()){
+            //if the list is empty, do nothing
             return 0;
         }
         else if (length ==1){ //if the list has only one item:
@@ -114,10 +138,12 @@ public: //public members can be accessed by the classes that inherit from simple
     }
 };
 
-template <typename MyType> class stack: public simpleList<MyType> { //this stack class inherits its basic structure from the simpleList class
+//this stack class inherits its basic structure from the simpleList class
+template <typename MyType> class stack: public simpleList<MyType> {
     using simpleList<MyType>::simpleList;
-    public: //defines push and pop (pushed to the beginning of the stack, so it is the first item removed at command 'pop' (LIFO)
-        void push(MyType newNode){ //newNode is the item being inserted
+    public:
+        //defines push and pop (pushed to the beginning of the stack, so it is the first item removed at command 'pop' (LIFO))
+        void push(MyType newNode){
             this -> insertAtStart(newNode);
         }
         MyType pop(){
@@ -125,10 +151,12 @@ template <typename MyType> class stack: public simpleList<MyType> { //this stack
         }
 };
 
+//this queue class inherits its basic structure from the simpleList class
 template <typename MyType> class queue: public simpleList<MyType>{
     using simpleList<MyType>::simpleList;
-    public: //defines push and pop (pushed to the end of the queue, so the first item in is the first item out (FIFO)
-        void push(MyType newNode){ //newNode is the item being inserted
+    public:
+        //defines push and pop (pushed to the end of the queue, so the first item in is the first item out (FIFO))
+        void push(MyType newNode){
             this -> insertAtEnd(newNode);
         }
         MyType pop() {
@@ -136,50 +164,54 @@ template <typename MyType> class queue: public simpleList<MyType>{
         }
 };
 
-template <typename T> simpleList<T>* getList(string name, list<simpleList<T>*> setOfLists) {
-    for (auto it = setOfLists.begin(); it != setOfLists.end(); it++) { //will iterate through the list of stacks and queues
-        // to find the list being pushed to/popped from
+//will iterate through the list of stacks and queues to find the list being pushed to/popped from
+template <typename MyType> simpleList<MyType>* getList(string name, list<simpleList<MyType>*> setOfLists) {
+    for (auto it = setOfLists.begin(); it != setOfLists.end(); it++) {
         if (((*it) -> getName()) == name)
-            return *it; //when the list is found, the pointer to the list is returned
+            return *it;
     }
-    return nullptr; //if the list is not found, the nullptr is returned
+    return nullptr;
 }
 
-bool checkName(string name, list<string> nameList){ //checks the list of names of stacks and queues to see if a list of that name exists
+//checks the list of names of stacks and queues to see if a list of that name exists
+bool checkName(string name, list<string> nameList){
     for (string n: nameList){
-        if (n == name){
+        if (n == name)
             return true;
-        }
     }
     return false;
 }
 
-void parse(string words[], ifstream &inputfile){ //reads the command line from the input file, and stores the words in an array
-    inputfile >> words[0]; //reads the first word of the line
-    if (words[0] == "pop"){ //if it is pop, it reads only one more word
+//reads the command line from the input file, and stores the words in an array
+void parse(string words[], ifstream &inputfile){
+    inputfile >> words[0];
+    if (words[0] == "pop")
         inputfile >> words[1];
-    }
-    else { //if the first word is create or push, it reads two more words
+    else {
         inputfile >> words[1];
         inputfile >> words[2];
     }
 }
-string getInFileName(){ //gets the information for input file from user
+
+//gets name of input file from user
+string getInFileName(){
     cout << "input file name: ";
     cin >> userinfile;
     //userinfile = userinfile + ".txt"; //could be used if user is not expected to write .txt
     return userinfile;
 }
-
-string getOutFileName(){ //gets information for output file from user
+//gets name of output file from user
+string getOutFileName(){
     cout << "output file name: ";
     cin >> useroutfile;
     //useroutfile = useroutfile + ".txt"; //could be used if user if not expected to write .txt
     return useroutfile;
 }
+
+//reads the input file and carries out the commands
 void reader(){
-    ifstream inputfile; //allows access to the input file
-    ofstream outputfile; //allows access to output file
+    ifstream inputfile;
+    ofstream outputfile;
     getInFileName();
     getOutFileName();
     string words[3];
@@ -187,82 +219,79 @@ void reader(){
     list < simpleList<double> * > listSLd; //list of all double stacks and queues
     list < simpleList<string> * > listSLs; //list of all string stacks and queues
     list <string> nameList; //list of names of all stacks and queues
-    inputfile.open(userinfile); //opens the input file using user info
-    outputfile.open(useroutfile); //opens the output file using user info
+    inputfile.open(userinfile);
+    outputfile.open(useroutfile);
     if (inputfile.is_open()){
-        while (inputfile.peek() != EOF){ //as long as the file has not reached the end:
-            parse(words, inputfile); //use the parse function to read a command line
-            outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n"; //write the processing status to the output file
+        while (inputfile.peek() != EOF){
+            parse(words, inputfile);
+            outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n";
             char dataType = words[1].at(0); //reads the first char of the list name, to determine the type of data it stores
-            if (words[0] == "create"){ //if the first word of the command is create:
-                if (checkName(words[1], nameList)){ //check the list of names to see if it exists already
-                    outputfile << "ERROR: This name already exists!\n"; //if it does, print an error message to the output file
+            if (words[0] == "create"){
+                /*if the first word of the command is create:
+                 * check name lsit to ensure the name does not already exist
+                 * if it doesnt, create a new lsit and push the name to the list of lists containing the same data type
+                 */
+                if (checkName(words[1], nameList)){
+                    outputfile << "ERROR: This name already exists!\n";
                     continue;
                 }
-                nameList.push_front(words[1]); //if its a new name, add it to the list of names
-                if (words[2] == "stack"){ //if the third word is stack:
-                    if (dataType == 'i') //and the type of data it stores is ints,
-                        listSLi.push_front(new stack<int> (words[1])); //push new stack into listSLi
-                    else if (dataType == 'd') //if the data it stores is doubles,
-                        listSLd.push_front(new stack<double> (words[1])); //push new stack into listSLd
-                    else if (dataType == 's')//if the data it stores is strings,
-                        listSLs.push_front(new stack<string> (words[1])); //push new stack into listSLs
+                nameList.push_front(words[1]);
+                if (words[2] == "stack"){
+                    if (dataType == 'i')
+                        listSLi.push_front(new stack<int> (words[1]));
+                    else if (dataType == 'd')
+                        listSLd.push_front(new stack<double> (words[1]));
+                    else if (dataType == 's')
+                        listSLs.push_front(new stack<string> (words[1]));
                 }
-                else if (words[2] == "queue"){ //if the third word is queue,
-                    if (dataType == 'i') //if it stores ints
-                        listSLi.push_front(new queue<int> (words[1]));//push new queue into listSLi
-                    else if (dataType == 'd') //if it stores doubles,
-                        listSLd.push_front(new queue<double> (words[1])); //push new queue into SLd
-                    else if (dataType == 's') //if it stores strings,
-                        listSLs.push_front(new queue<string> (words[1])); // push new queue into listSLs
+                else if (words[2] == "queue"){
+                    if (dataType == 'i')
+                        listSLi.push_front(new queue<int> (words[1]));
+                    else if (dataType == 'd')
+                        listSLd.push_front(new queue<double> (words[1]));
+                    else if (dataType == 's')
+                        listSLs.push_front(new queue<string> (words[1]));
                 }
             }
-            else if (words[0] == "push"){ //if the first word of the command is pop:
-                if ( !checkName(words[1], nameList)){ //check the list of names: if it does not exist, print an error
+            else if (words[0] == "push"){
+                /*if the second word is push:
+                 * check name list to ensure the list does exist
+                 * push the third word
+                 */
+                if ( !checkName(words[1], nameList))
                     outputfile << "ERROR: This name does not exist!\n";
-                    continue;
-                }
-                else if (dataType =='i'){ //if it stores ints,
-                    getList(words[1], listSLi) -> push(stoi(words[2])); //change the string stored in the third word to an integer and push it
-                    continue;
-                }
-                else if (dataType == 'd'){ //if it stores doubles,
-                    getList(words[1], listSLd) -> push(stod(words[2])); //change the string in the third word to a double and push it
-                    continue;
-                }
-                else if (dataType == 's'){ //if it stores strings,
-                    getList(words[1], listSLs) -> push(words[2]); //just push the string of the third word directly
-                    continue;
-                }
+                else if (dataType =='i')
+                    getList(words[1], listSLi) -> push(stoi(words[2]));
+                else if (dataType == 'd')
+                    getList(words[1], listSLd) -> push(stod(words[2]));
+                else if (dataType == 's')
+                    getList(words[1], listSLs) -> push(words[2]);
             }
-            else if (words[0] == "pop"){ //if the command says to pop
-                if ( !checkName(words[1], nameList)){ //check if the name exists, print an error if it does not
+            else if (words[0] == "pop"){
+                /*if the first word is pop:
+                 * check that the list name exists, and that it is not empty
+                 * pop and return the value
+                 */
+                if ( !checkName(words[1], nameList))
                     outputfile << "ERROR: This name does not exist!\n";
-                    continue;
-                }
-                if (dataType == 'i'){ //if it stores integers,
-                    if (getList(words[1], listSLi)-> isEmpty()){ //check if the list is empty
-                        outputfile << "ERROR: This list is empty!\n"; //if it is, print an error
-                        continue;
-                    }
-                    outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n"; //otherwise, pop it and print the popped value
-                    continue;
-                }
-                else if (dataType == 'd'){ //same process for lists of doubles
-                    if (getList(words[1], listSLd)-> isEmpty()){
+                if (dataType == 'i'){
+                    if (getList(words[1], listSLi)-> isEmpty())
                         outputfile << "ERROR: This list is empty!\n";
-                        continue;
-                    }
-                    outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
-                    continue;
+                     else
+                         outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
                 }
-                else if (dataType == 's'){ //same process for lists of strings
-                    if (getList(words[1], listSLs)-> isEmpty()){
+                else if (dataType == 'd'){
+                    if (getList(words[1], listSLd)-> isEmpty())
                         outputfile << "ERROR: This list is empty!\n";
-                        continue;
-                    }
-                    outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
-                    continue;
+                    else
+                        outputfile << "Value popped: " << getList(words[1], listSLd) -> pop() << "\n";
+
+                }
+                else if (dataType == 's'){
+                    if (getList(words[1], listSLs)-> isEmpty())
+                        outputfile << "ERROR: This list is empty!\n";
+                    else
+                        outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
                 }
             }
         }

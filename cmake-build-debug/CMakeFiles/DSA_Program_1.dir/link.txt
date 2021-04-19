@@ -1,1 +1,0 @@
-/usr/bin/c++.exe -g -Wl,--enable-auto-import CMakeFiles/DSA_Program_1.dir/main.cpp.o -o DSA_Program_1.exe -Wl,--out-implib,libDSA_Program_1.dll.a -Wl,--major-image-version,0,--minor-image-version,0 

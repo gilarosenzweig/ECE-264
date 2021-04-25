@@ -122,14 +122,16 @@ public:
             //if the list is empty, do nothing
             return 0;
         }
-        else if (length ==1){ //if the list has only one item:
+        else if (length ==1){
+            //if the list has only one item:
             MyType extract = firstptr -> getValue(); //the value of the firstptr is extracted and stored
             firstptr = nullptr; //the firstptr is reset to nullptr
             lastptr = nullptr; //the lastptr also reset to nullptr
             length = length - 1; //length is decremented
             return extract;
         }
-        else { //if the length is >1
+        else {
+            //if the length is >1
             MyType extract = firstptr -> getValue(); //extract the firstptr and store
             firstptr = firstptr -> getNext(); //reset the firstptr to the pointer of the next node
             length = length - 1; //length is decremented
@@ -224,20 +226,20 @@ void reader(){
     if (inputfile.is_open()){
         while (inputfile.peek() != EOF){
             parse(words, inputfile);
-            if (words[0] == "pop")
+            if (words[0] == "0")
+                continue;
+            else if (words[0] == "pop")
                 outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << "\n";
             else
                 outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n";
             char dataType = words[1].at(0); //reads the first char of the list name, to determine the type of data it stores
             if (words[0] == "create"){
                 /*if the first word of the command is create:
-                 * check name lsit to ensure the name does not already exist
-                 * if it doesnt, create a new lsit and push the name to the list of lists containing the same data type
+                 * check name list to ensure the name does not already exist
+                 * if it doesnt, create a new list and push the name to the list of lists containing the same data type
                  */
-                if (checkName(words[1], nameList)){
+                if (checkName(words[1], nameList))
                     outputfile << "ERROR: This name already exists!\n";
-                    continue;
-                }
                 nameList.push_front(words[1]);
                 if (words[2] == "stack"){
                     if (dataType == 'i')
@@ -297,6 +299,7 @@ void reader(){
                         outputfile << "Value popped: " << getList(words[1], listSLs) -> pop() << "\n";
                 }
             }
+            words[0] = "0", words[1] = "0", words[2] = "0";
         }
     }
 }

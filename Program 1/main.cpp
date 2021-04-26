@@ -18,7 +18,7 @@ string useroutfile, userinfile;
 
 //abstract base class for simpleList. stack and queue will inherit from this class
 template <typename MyType> class simpleList {
- private:
+private:
     string name; //stores name of the list
     struct Node {
         MyType value; //the value stored in the node
@@ -122,16 +122,14 @@ public:
             //if the list is empty, do nothing
             return 0;
         }
-        else if (length ==1){
-            //if the list has only one item:
+        else if (length ==1){ //if the list has only one item:
             MyType extract = firstptr -> getValue(); //the value of the firstptr is extracted and stored
             firstptr = nullptr; //the firstptr is reset to nullptr
             lastptr = nullptr; //the lastptr also reset to nullptr
             length = length - 1; //length is decremented
             return extract;
         }
-        else {
-            //if the length is >1
+        else { //if the length is >1
             MyType extract = firstptr -> getValue(); //extract the firstptr and store
             firstptr = firstptr -> getNext(); //reset the firstptr to the pointer of the next node
             length = length - 1; //length is decremented
@@ -143,27 +141,27 @@ public:
 //this stack class inherits its basic structure from the simpleList class
 template <typename MyType> class stack: public simpleList<MyType> {
     using simpleList<MyType>::simpleList;
-    public:
-        //defines push and pop (pushed to the beginning of the stack, so it is the first item removed at command 'pop' (LIFO))
-        void push(MyType newNode){
-            this -> insertAtStart(newNode);
-        }
-        MyType pop(){
-            return this -> removeAtStart();
-        }
+public:
+    //defines push and pop (pushed to the beginning of the stack, so it is the first item removed at command 'pop' (LIFO))
+    void push(MyType newNode){
+        this -> insertAtStart(newNode);
+    }
+    MyType pop(){
+        return this -> removeAtStart();
+    }
 };
 
 //this queue class inherits its basic structure from the simpleList class
 template <typename MyType> class queue: public simpleList<MyType>{
     using simpleList<MyType>::simpleList;
-    public:
-        //defines push and pop (pushed to the end of the queue, so the first item in is the first item out (FIFO))
-        void push(MyType newNode){
-            this -> insertAtEnd(newNode);
-        }
-        MyType pop() {
-            return this -> removeAtStart();
-        }
+public:
+    //defines push and pop (pushed to the end of the queue, so the first item in is the first item out (FIFO))
+    void push(MyType newNode){
+        this -> insertAtEnd(newNode);
+    }
+    MyType pop() {
+        return this -> removeAtStart();
+    }
 };
 
 //will iterate through the list of stacks and queues to find the list being pushed to/popped from
@@ -187,12 +185,10 @@ bool checkName(string name, list<string> nameList){
 //reads the command line from the input file, and stores the words in an array
 void parse(string words[], ifstream &inputfile){
     inputfile >> words[0];
+    inputfile >> words[1];
     if (words[0] == "pop")
-        inputfile >> words[1];
-    else {
-        inputfile >> words[1];
-        inputfile >> words[2];
-    }
+        return;
+    inputfile >> words[2];
 }
 
 //gets name of input file from user
@@ -228,7 +224,7 @@ void reader(){
             parse(words, inputfile);
             if (words[0] == "0")
                 continue;
-            else if (words[0] == "pop")
+            if (words[0] == "pop")
                 outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << "\n";
             else
                 outputfile << "PROCESSING COMMAND: " << words[0] << " " << words[1] << " " << words[2] << "\n";
@@ -240,22 +236,38 @@ void reader(){
                  */
                 if (checkName(words[1], nameList))
                     outputfile << "ERROR: This name already exists!\n";
-                nameList.push_front(words[1]);
-                if (words[2] == "stack"){
-                    if (dataType == 'i')
-                        listSLi.push_front(new stack<int> (words[1]));
-                    else if (dataType == 'd')
-                        listSLd.push_front(new stack<double> (words[1]));
-                    else if (dataType == 's')
-                        listSLs.push_front(new stack<string> (words[1]));
-                }
-                else if (words[2] == "queue"){
-                    if (dataType == 'i')
-                        listSLi.push_front(new queue<int> (words[1]));
-                    else if (dataType == 'd')
-                        listSLd.push_front(new queue<double> (words[1]));
-                    else if (dataType == 's')
-                        listSLs.push_front(new queue<string> (words[1]));
+                else {
+                    nameList.push_front(words[1]);
+                    if (words[2] == "stack"){
+                        switch (dataType){
+                            case 'i':
+                                listSLi.push_front(new stack<int> (words[1]));
+                                break;
+                            case 'd':
+                                listSLd.push_front(new stack<double> (words[1]));
+                                break;
+                            case 's':
+                                listSLs.push_front(new stack<string> (words[1]));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else if (words[2] == "queue"){
+                        switch (dataType){
+                            case 'i':
+                                listSLi.push_front(new queue<int> (words[1]));
+                                break;
+                            case 'd':
+                                listSLd.push_front(new queue<double> (words[1]));
+                                break;
+                            case 's':
+                                listSLs.push_front(new queue<string> (words[1]));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
             else if (words[0] == "push") {
@@ -265,12 +277,21 @@ void reader(){
                  */
                 if (!checkName(words[1], nameList))
                     outputfile << "ERROR: This name does not exist!\n";
-                else if (checkName(words[1], nameList) && dataType =='i')
-                    getList(words[1], listSLi)->push(stoi(words[2]));
-                else if (dataType == 'd')
-                    getList(words[1], listSLd) -> push(stod(words[2]));
-                else if (dataType == 's')
-                    getList(words[1], listSLs) -> push(words[2]);
+                else {
+                    switch (dataType){
+                        case 'i':
+                            getList(words[1], listSLi)->push(stoi(words[2]));
+                            break;
+                        case 'd':
+                            getList(words[1], listSLd) -> push(stod(words[2]));
+                            break;
+                        case 's':
+                            getList(words[1], listSLs) -> push(words[2]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
             else if (words[0] == "pop"){
                 /*if the first word is pop:
@@ -282,8 +303,8 @@ void reader(){
                 else if (dataType == 'i'){
                     if (getList(words[1], listSLi)-> isEmpty())
                         outputfile << "ERROR: This list is empty!\n";
-                     else
-                         outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
+                    else
+                        outputfile << "Value popped: " << getList(words[1], listSLi) -> pop() << "\n";
                 }
                 else if (dataType == 'd'){
                     if (getList(words[1], listSLd)-> isEmpty())
